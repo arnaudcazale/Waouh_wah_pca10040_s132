@@ -23,6 +23,7 @@ enum
 #define ADC_REFERENCE_VOLTAGE       (0.6f)              // The standard internal ADC reference voltage.
 #define ADC_RESOLUTION_BITS         (8 + (SAADC_CONFIG_RESOLUTION * 2)) //ADC resolution [bits].
 
+void saadc_init_one_shot();
 void saadc_init(ble_wah_t *);
 void saadc_sampling_event_init(void);
 void saadc_callback(nrf_drv_saadc_evt_t const *);

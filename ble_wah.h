@@ -59,7 +59,9 @@ typedef struct
     ble_wah_evt_type_t evt_type;
     uint8_t          * p_data;
     uint16_t           length;
-} ble_wah_evt_t;                
+} ble_wah_evt_t;       
+
+         
 
 // Forward declaration of the ble_cus_t type.
 typedef struct ble_wah_s ble_wah_t;
@@ -72,7 +74,7 @@ typedef void (*ble_wah_evt_handler_t) (ble_wah_t * p_wah, ble_wah_evt_t * p_evt)
 typedef struct
 {
     ble_wah_evt_handler_t         evt_handler;                /**< Event handler to be called for handling events in the Custom Service. */
-    uint8_t                       initial_wah_value;          /**< Initial custom value */
+    int16_t                       initial_pedal_value;          /**< Initial custom value */
     ble_srv_cccd_security_mode_t  wah_value_char_attr_md;     /**< Initial security level for Custom characteristics attribute */
 } ble_wah_init_t;
 

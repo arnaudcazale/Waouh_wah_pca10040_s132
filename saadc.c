@@ -8,7 +8,21 @@ static const nrf_drv_timer_t m_timer = NRF_DRV_TIMER_INSTANCE(1);
 static ble_wah_t * m_wah_service;
 static uint16_t m_data = 0;
 
+/**
+ * @brief Function for confguring SAADC channel 0 for sampling AIN0 (P0.02).
+ */
+void saadc_init_one_shot(void)
+{
+    ret_code_t err_code;
+    nrf_saadc_channel_config_t channel_config =
+    NRF_DRV_SAADC_DEFAULT_CHANNEL_CONFIG_SE(NRF_SAADC_INPUT_AIN1);
 
+    err_code = nrf_drv_saadc_init(NULL, saadc_callback);
+    APP_ERROR_CHECK(err_code);
+
+    err_code = nrf_drv_saadc_channel_init(0, &channel_config);
+    APP_ERROR_CHECK(err_code);
+}
 
 void saadc_init(ble_wah_t * wah_service)
 {

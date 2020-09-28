@@ -544,7 +544,18 @@ static void services_init(void)
 
         // Initialize CUS Service init structure to zero.
         wah_init.evt_handler                = on_wah_evt;
-    
+
+        //Saadc pedal for initialization value
+        nrf_saadc_value_t sample;
+        saadc_init_one_shot();
+        err_code = nrfx_saadc_sample_convert(NRF_SAADC_INPUT_AIN1, &sample);
+        nrf_drv_saadc_uninit();
+        APP_ERROR_CHECK(err_code);
+        wah_init.initial_pedal_value = sample;
+
+//        NRF_LOG_INFO("Sample: %i", sample);
+//        NRF_LOG_FLUSH();
+
         err_code = ble_wah_init(&m_wah, &wah_init);
         APP_ERROR_CHECK(err_code); 
                
@@ -1067,8 +1078,6 @@ int main(void)
     power_management_init();
 
     load_presets_from_flash();
-    saadc_init(&m_wah);
-    saadc_sampling_event_init();
     
     ble_stack_init();
     gap_params_init();
@@ -1077,6 +1086,9 @@ int main(void)
     advertising_init();
     conn_params_init();
     peer_manager_init();
+    
+    saadc_init(&m_wah);
+    saadc_sampling_event_init();
 
     // Start execution.
     NRF_LOG_INFO("Keyztone_WahWah started.");
