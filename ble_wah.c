@@ -809,8 +809,8 @@ void check_data_received(uint8_t idx_prst, uint8_t * data, uint16_t length)
     preset[idx_prst].LV2             = data[INDEX_LV2];
     preset[idx_prst].STATUS          = data[INDEX_STATUS];
     preset[idx_prst].MODE            = data[INDEX_MODE];
-    preset[idx_prst].TIME_AUTO_WAH   = data[INDEX_TIME_AUTO_WAH];
-    preset[idx_prst].TIME_AUTO_LEVEL = data[INDEX_TIME_AUTO_LEVEL];
+    preset[idx_prst].TIME_AUTO_WAH   = data[INDEX_TIME_AUTO_WAH] | (uint16_t)data[INDEX_TIME_AUTO_WAH + 1] << 8;
+    preset[idx_prst].TIME_AUTO_LEVEL = data[INDEX_TIME_AUTO_LEVEL] | (uint16_t)data[INDEX_TIME_AUTO_LEVEL + 1] << 8; 
     preset[idx_prst].IMPEDANCE       = data[INDEX_IMPEDANCE];
     strcpy(preset[idx_prst].NAME,      "");
     strcpy(preset[idx_prst].NAME,      &data[INDEX_NAME]);
