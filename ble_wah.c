@@ -402,9 +402,8 @@ static uint32_t pedal_value_char_add(ble_wah_t * p_wah, const ble_wah_init_t * p
     ble_gatts_attr_t    attr_char_value;
     ble_uuid_t          ble_uuid;
     ble_gatts_attr_md_t attr_md;
-    //uint16_t            data = {0};
-    //NRF_LOG_INFO("pedal_value_char_add 0x%x", p_wah_init->initial_pedal_value);
-
+    uint16_t            data = {0};
+    
     // Add Custom Value characteristic
     memset(&cccd_md, 0, sizeof(cccd_md));
 
@@ -417,7 +416,6 @@ static uint32_t pedal_value_char_add(ble_wah_t * p_wah, const ble_wah_init_t * p
 
     memset(&char_md, 0, sizeof(char_md));
 
-    char_md.char_props.read          = 1;
     char_md.char_props.notify        = 1;
     char_md.p_char_user_desc         = NULL;
     char_md.p_char_pf                = NULL;
@@ -430,8 +428,8 @@ static uint32_t pedal_value_char_add(ble_wah_t * p_wah, const ble_wah_init_t * p
 		
     memset(&attr_md, 0, sizeof(attr_md));
 
-    BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(&attr_md.read_perm);
-    //BLE_GAP_CONN_SEC_MODE_SET_NO_ACCESS(&attr_md.write_perm);
+    BLE_GAP_CONN_SEC_MODE_SET_NO_ACCESS(&attr_md.read_perm);
+    BLE_GAP_CONN_SEC_MODE_SET_NO_ACCESS(&attr_md.write_perm);
 
     attr_md.vloc       = BLE_GATTS_VLOC_STACK;
     attr_md.rd_auth    = 0;
@@ -444,7 +442,7 @@ static uint32_t pedal_value_char_add(ble_wah_t * p_wah, const ble_wah_init_t * p
     attr_char_value.p_attr_md = &attr_md;
     attr_char_value.init_len  = sizeof(uint16_t);
     attr_char_value.init_offs = 0;
-    attr_char_value.p_value   = (uint8_t *)&p_wah_init->initial_pedal_value;
+    attr_char_value.p_value   = (uint8_t *)data;
     attr_char_value.max_len   = sizeof(uint16_t);
 
     err_code = sd_ble_gatts_characteristic_add(p_wah->service_handle, &char_md,
@@ -852,13 +850,31 @@ void check_data_received(uint8_t idx_prst, uint8_t * data, uint16_t length)
     ///Si bit "MODE" = 0, Command SPI & I2C chips in real time  
     }else if (preset[idx_prst].STATUS == PRESET_EDIT_STATUS)
     {
-        update_preset();
+        update_preset(idx_prst);
     }
 }
 
-void update_preset()
+void update_preset(uint8_t idx_prst)
 {
+    debug_preset(idx_prst);
+}
 
-
-
+void debug_preset (uint8_t idx_prst)
+{
+    #ifdef DEBUG_PRESET
+      NRF_LOG_INFO("***************************************");        
+      NRF_LOG_INFO("PRESET_              %d", idx_prst);
+      NRF_LOG_INFO("FC1 =                %d", preset[idx_prst].FC1);
+      NRF_LOG_INFO("FC2 =                %d", preset[idx_prst].FC2);
+      NRF_LOG_INFO("Q1 =                 %d", preset[idx_prst].Q1);
+      NRF_LOG_INFO("Q2 =                 %d", preset[idx_prst].Q2); 
+      NRF_LOG_INFO("LV1 =                %d", preset[idx_prst].LV1);
+      NRF_LOG_INFO("LV2 =                %d", preset[idx_prst].LV2);
+      NRF_LOG_INFO("STATUS =             %d", preset[idx_prst].STATUS);
+      NRF_LOG_INFO("MODE =               %d", preset[idx_prst].MODE); 
+      NRF_LOG_INFO("TIME_AUTO_WAH =      %d", preset[idx_prst].TIME_AUTO_WAH); 
+      NRF_LOG_INFO("TIME_AUTO_LEVEL =    %d", preset[idx_prst].TIME_AUTO_LEVEL);
+      NRF_LOG_INFO("IMPEDANCE =          %d", preset[idx_prst].IMPEDANCE); 
+      NRF_LOG_INFO("NAME =               %s", preset[idx_prst].NAME); 
+    #endif
 }

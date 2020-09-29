@@ -453,7 +453,7 @@ static void on_wah_evt(ble_wah_t     * p_wah_service,
     ret_code_t err_code;
     uint8_t idx_prst;
 
-    NRF_LOG_INFO("BLE event received in main. Event type = %d\r\n", p_evt->evt_type); 
+    //NRF_LOG_INFO("BLE event received in main. Event type = %d\r\n", p_evt->evt_type); 
     
     switch(p_evt->evt_type)
     {
@@ -461,7 +461,7 @@ static void on_wah_evt(ble_wah_t     * p_wah_service,
             NRF_LOG_INFO("BLE_WAH_EVT_PRESET_SELECTION_VALUE_RECEIVED %d", *p_evt->p_data);
             m_preset_selection_value = *p_evt->p_data;
             update_led(m_preset_selection_value);
-            update_preset();
+            update_preset(m_preset_selection_value);
             break;
 
         case BLE_WAH_EVT_PRESET_1_RECEIVED:
@@ -544,17 +544,6 @@ static void services_init(void)
 
         // Initialize CUS Service init structure to zero.
         wah_init.evt_handler                = on_wah_evt;
-
-        //Saadc pedal for initialization value
-        nrf_saadc_value_t sample;
-        saadc_init_one_shot();
-        err_code = nrfx_saadc_sample_convert(NRF_SAADC_INPUT_AIN1, &sample);
-        nrf_drv_saadc_uninit();
-        APP_ERROR_CHECK(err_code);
-        wah_init.initial_pedal_value = sample;
-
-//        NRF_LOG_INFO("Sample: %i", sample);
-//        NRF_LOG_FLUSH();
 
         err_code = ble_wah_init(&m_wah, &wah_init);
         APP_ERROR_CHECK(err_code); 
@@ -977,7 +966,7 @@ static void advertising_init(void)
  *
  * @param[out] p_erase_bonds  Will be true if the clear bonding button was pressed to wake the application up.
  */
-static void buttons_leds_init(bool * p_erase_bonds)
+static void buttons_leds_init(bool * p_erase_bonds, bool * p_restore_factory)
 {
     ret_code_t err_code;
     bsp_event_t startup_event;
@@ -989,6 +978,8 @@ static void buttons_leds_init(bool * p_erase_bonds)
     APP_ERROR_CHECK(err_code);
 
     *p_erase_bonds = (startup_event == BSP_EVENT_CLEAR_BONDING_DATA);
+
+    *p_restore_factory = (startup_event == BSP_EVENT_RESTORE_MEMORY);
 }
 
 
@@ -1069,15 +1060,17 @@ int main(void)
 
 {
     bool erase_bonds;
+    bool restore_factory;
 
     // Initialize.
     log_init();
 
     timers_init();
-    buttons_leds_init(&erase_bonds);
+    buttons_leds_init(&erase_bonds, &restore_factory);
+
     power_management_init();
 
-    load_presets_from_flash();
+    load_presets_from_flash(restore_factory);
     
     ble_stack_init();
     gap_params_init();

@@ -44,7 +44,7 @@ void update_led(uint8_t led)
 /*******************************************************************************
 
 *******************************************************************************/
-void load_presets_from_flash()
+void load_presets_from_flash(bool restore_factory)
 {
     ret_code_t err_code;
     //flash_initializing = true;
@@ -54,21 +54,31 @@ void load_presets_from_flash()
   
     //verify if something is set into memory
     err_code = check_memory();
-
     if(err_code != NRF_SUCCESS )
     {
-      NRF_LOG_INFO("Memory empty");
-      err_code = write_factory_presets();
-      if (err_code == NRF_SUCCESS){
-        NRF_LOG_INFO("WRITE FACTORY PRESET SUCCESS");              
-      }else{
-        NRF_LOG_INFO("ERROR WRITE FACTORY PRESET"); 
-      }
+        NRF_LOG_INFO("Memory empty");
+        err_code = write_factory_presets();
+        if (err_code == NRF_SUCCESS){
+            NRF_LOG_INFO("WRITE FACTORY PRESET SUCCESS");              
+        }else{
+            NRF_LOG_INFO("ERROR WRITE FACTORY PRESET"); 
+        }
     }
 
-     NRF_LOG_INFO("Loading_Presets...");
-     load_flash_config();
+    if(restore_factory)
+    {
+        err_code = write_factory_presets();
+        if (err_code == NRF_SUCCESS){
+            NRF_LOG_INFO("WRITE FACTORY PRESET SUCCESS");              
+        }else{
+            NRF_LOG_INFO("ERROR WRITE FACTORY PRESET"); 
+        }
+    }
+    
 
+    NRF_LOG_INFO("Loading_Presets...");
+    load_flash_config();
+    
 }
 
 /*******************************************************************************
@@ -437,3 +447,4 @@ void save_preset2flash(uint8_t idx_prst)
     write_preset_config(idx_prst);
     //while(!flash_writing);
 }
+

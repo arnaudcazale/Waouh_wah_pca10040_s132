@@ -122,5 +122,7 @@ static uint32_t preset_4_char_add(ble_wah_t *, const ble_wah_init_t *);
 uint32_t preset_selection_value_update(ble_wah_t *, uint8_t);
 uint32_t pedal_data_value_update(ble_wah_t *, uint16_t);
 void check_data_received(uint8_t, uint8_t *, uint16_t);
+void update_preset(uint8_t);
+void debug_preset(uint8_t);
 
 #endif // BLE_WAH_H__

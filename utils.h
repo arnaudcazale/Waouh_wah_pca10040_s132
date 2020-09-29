@@ -107,7 +107,7 @@ typedef PACKED( struct
 void clear_all_leds();
 void update_led(uint8_t led);
 
-void load_presets_from_flash();
+void load_presets_from_flash(bool);
 static ret_code_t fds_test_init (void);
 static void my_fds_evt_handler(fds_evt_t const * );
 static ret_code_t check_memory(void);
