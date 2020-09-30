@@ -38,7 +38,8 @@
 #define INDEX_TIME_AUTO_WAH    8 
 #define INDEX_TIME_AUTO_LEVEL  10
 #define INDEX_IMPEDANCE        12
-#define INDEX_NAME             13
+#define INDEX_COLOR            13
+#define INDEX_NAME             14
 
 #define NAME_MAX_LENGTH        20
 
@@ -62,6 +63,13 @@ enum
     LOW_Z,  
 };
 
+enum
+{
+    COLOR_1,           
+    COLOR_2,  
+    COLOR_3,
+    COLOR_4,
+};
 
 #ifdef __GNUC__
     #ifdef PACKED
@@ -84,6 +92,7 @@ typedef PACKED( struct
     __ALIGN(4) uint16_t                 TIME_AUTO_WAH;
     __ALIGN(4) uint16_t                 TIME_AUTO_LEVEL;
     __ALIGN(4) uint8_t                  IMPEDANCE;
+    __ALIGN(4) uint8_t                  COLOR;
     __ALIGN(4) char                     NAME[NAME_MAX_LENGTH];
    
 }) preset_config_32_t;
@@ -101,6 +110,7 @@ typedef PACKED( struct
      uint16_t                 TIME_AUTO_WAH;
      uint16_t                 TIME_AUTO_LEVEL;
      uint8_t                  IMPEDANCE;
+     uint8_t                  COLOR;
      char                     NAME[NAME_MAX_LENGTH];
 }) preset_config_8_t;
 

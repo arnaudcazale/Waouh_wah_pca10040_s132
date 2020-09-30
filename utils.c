@@ -150,7 +150,7 @@ static void my_fds_evt_handler(fds_evt_t const * const p_fds_evt)
             }
             break;
         default:
-            NRF_LOG_INFO("m_FDS handler - %d - %d\r\n", p_fds_evt->id, p_fds_evt->result);
+            //NRF_LOG_INFO("m_FDS handler - %d - %d\r\n", p_fds_evt->id, p_fds_evt->result);
             break;
     }
 }
@@ -190,6 +190,7 @@ ret_code_t write_factory_presets()
     preset_32[0].TIME_AUTO_WAH   = 127;
     preset_32[0].TIME_AUTO_LEVEL = 126;
     preset_32[0].IMPEDANCE       = LOW_Z;
+    preset_32[0].COLOR           = COLOR_1;
     strcpy(preset_32[0].NAME, "PRESET_1");
 
     //flash_writing = true;
@@ -207,6 +208,7 @@ ret_code_t write_factory_presets()
     preset_32[1].TIME_AUTO_WAH   = 666;
     preset_32[1].TIME_AUTO_LEVEL = 222;
     preset_32[1].IMPEDANCE       = LOW_Z;
+    preset_32[1].COLOR           = COLOR_2;
     strcpy(preset_32[1].NAME, "PRESET_2");
 
     //flash_writing = true;
@@ -224,6 +226,7 @@ ret_code_t write_factory_presets()
     preset_32[2].TIME_AUTO_WAH   = 1000;
     preset_32[2].TIME_AUTO_LEVEL = 500;
     preset_32[2].IMPEDANCE       = LOW_Z;
+    preset_32[2].COLOR           = COLOR_3;
     strcpy(preset_32[2].NAME, "PRESET_3");
 
     //flash_writing = true;
@@ -241,6 +244,7 @@ ret_code_t write_factory_presets()
     preset_32[3].TIME_AUTO_WAH   = 999;
     preset_32[3].TIME_AUTO_LEVEL = 444;
     preset_32[3].IMPEDANCE       = LOW_Z;
+    preset_32[3].COLOR           = COLOR_4;
     strcpy(preset_32[3].NAME, "PRESET_4");
 
     //flash_writing = true;
@@ -324,6 +328,7 @@ void load_flash_config()
         preset_32[idx_prst].TIME_AUTO_WAH   = data->TIME_AUTO_WAH;
         preset_32[idx_prst].TIME_AUTO_LEVEL = data->TIME_AUTO_LEVEL;
         preset_32[idx_prst].IMPEDANCE       = data->IMPEDANCE;
+        preset_32[idx_prst].COLOR           = data->COLOR;
         strcpy(preset_32[idx_prst].NAME,      data->NAME);
 
         preset[idx_prst].FC1             = preset_32[idx_prst].FC1;
@@ -337,6 +342,7 @@ void load_flash_config()
         preset[idx_prst].TIME_AUTO_WAH   = preset_32[idx_prst].TIME_AUTO_WAH;
         preset[idx_prst].TIME_AUTO_LEVEL = preset_32[idx_prst].TIME_AUTO_LEVEL;
         preset[idx_prst].IMPEDANCE       = preset_32[idx_prst].IMPEDANCE;
+        preset[idx_prst].COLOR           = preset_32[idx_prst].COLOR;
         strcpy(preset[idx_prst].NAME,      preset_32[idx_prst].NAME);
 
         #ifdef DEBUG_PRESET
@@ -353,24 +359,8 @@ void load_flash_config()
           NRF_LOG_INFO("TIME_AUTO_WAH =      %d", preset[idx_prst].TIME_AUTO_WAH); 
           NRF_LOG_INFO("TIME_AUTO_LEVEL =    %d", preset[idx_prst].TIME_AUTO_LEVEL);
           NRF_LOG_INFO("IMPEDANCE =          %d", preset[idx_prst].IMPEDANCE); 
+          NRF_LOG_INFO("COLOR =              %d", preset[idx_prst].COLOR); 
           NRF_LOG_INFO("NAME =               %s", preset[idx_prst].NAME); 
-        #endif
-
-        #ifdef UART_DEBUG
-          printf("***************************************\n");        
-          printf("PRESET_              %-10d\r\n", idx_prst);
-          printf("FC1 =                %-10d\r\n", preset[idx_prst].FC1);
-          printf("FC2 =                %-10d\r\n", preset[idx_prst].FC2);
-          printf("Q1 =                 %-10d\r\n", preset[idx_prst].Q1);
-          printf("Q2 =                 %d\r\n", preset[idx_prst].Q2); 
-          printf("LV1 =                %d\r\n", preset[idx_prst].LV1);
-          printf("LV2 =                %d\r\n", preset[idx_prst].LV2);
-          printf("STATUS =             %d\r\n", preset[idx_prst].STATUS);
-          printf("MODE =               %d\r\n", preset[idx_prst].MODE); 
-          printf("TIME_AUTO_WAH =      %d\r\n", preset[idx_prst].TIME_AUTO_WAH); 
-          printf("TIME_AUTO_LEVEL =    %d\r\n", preset[idx_prst].TIME_AUTO_LEVEL);
-          printf("IMPEDANCE =          %d\r\n", preset[idx_prst].IMPEDANCE); 
-          printf("NAME =               %s\r\n", preset[idx_prst].NAME); 
         #endif
 
     }
@@ -423,6 +413,7 @@ void save_preset2flash(uint8_t idx_prst)
     preset_32[idx_prst].TIME_AUTO_WAH   = preset[idx_prst].TIME_AUTO_WAH;
     preset_32[idx_prst].TIME_AUTO_LEVEL = preset[idx_prst].TIME_AUTO_LEVEL;
     preset_32[idx_prst].IMPEDANCE       = preset[idx_prst].IMPEDANCE;
+    preset_32[idx_prst].COLOR           = preset[idx_prst].COLOR;
     strcpy(preset_32[idx_prst].NAME,      "");
     strcpy(preset_32[idx_prst].NAME,      preset[idx_prst].NAME);
 
@@ -439,7 +430,8 @@ void save_preset2flash(uint8_t idx_prst)
       NRF_LOG_INFO("MODE =               %d", preset_32[idx_prst].MODE); 
       NRF_LOG_INFO("TIME_AUTO_WAH =      %d", preset_32[idx_prst].TIME_AUTO_WAH); 
       NRF_LOG_INFO("TIME_AUTO_LEVEL =    %d", preset_32[idx_prst].TIME_AUTO_LEVEL);
-      NRF_LOG_INFO("IMPEDANCE =          %d", preset_32[idx_prst].IMPEDANCE); 
+      NRF_LOG_INFO("IMPEDANCE =          %d", preset_32[idx_prst].IMPEDANCE);
+      NRF_LOG_INFO("COLOR =              %d", preset_32[idx_prst].COLOR);
       NRF_LOG_INFO("NAME =               %s", preset_32[idx_prst].NAME); 
     #endif
 
