@@ -2,12 +2,14 @@
 
 
 
-static bool flash_writing = false;
-static bool flash_initializing = false;
+//static bool flash_writing = false;
+//static bool flash_initializing = false;
 static fds_record_desc_t    my_record_desc;
 
 static preset_config_32_t preset_32[PRESET_NUMBER];
 preset_config_8_t preset[PRESET_NUMBER];
+calib_config_32_t calibration_32;
+calib_config_8_t calibration;
 
 void clear_all_leds()
 {
@@ -194,6 +196,10 @@ ret_code_t write_factory_presets()
     preset_32[0].TIME_AUTO_LEVEL = 126;
     preset_32[0].IMPEDANCE       = LOW_Z;
     preset_32[0].COLOR           = COLOR_1;
+    preset_32[0].HIGH_VOYEL      = ae;
+    preset_32[0].LOW_VOYEL       = uh;
+    preset_32[0].MIX_DRY_WET     = 127;
+    preset_32[0].FILTER_TYPE     = LOW_PASS;
     strcpy(preset_32[0].NAME, "PRESET_1");
 
     //flash_writing = true;
@@ -212,6 +218,10 @@ ret_code_t write_factory_presets()
     preset_32[1].TIME_AUTO_LEVEL = 222;
     preset_32[1].IMPEDANCE       = LOW_Z;
     preset_32[1].COLOR           = COLOR_2;
+    preset_32[1].HIGH_VOYEL      = ae;
+    preset_32[1].LOW_VOYEL       = uh;
+    preset_32[1].MIX_DRY_WET     = 127;
+    preset_32[1].FILTER_TYPE     = LOW_PASS;
     strcpy(preset_32[1].NAME, "PRESET_2");
 
     //flash_writing = true;
@@ -230,6 +240,10 @@ ret_code_t write_factory_presets()
     preset_32[2].TIME_AUTO_LEVEL = 500;
     preset_32[2].IMPEDANCE       = LOW_Z;
     preset_32[2].COLOR           = COLOR_3;
+    preset_32[2].HIGH_VOYEL      = ae;
+    preset_32[2].LOW_VOYEL       = uh;
+    preset_32[2].MIX_DRY_WET     = 127;
+    preset_32[2].FILTER_TYPE     = LOW_PASS;
     strcpy(preset_32[2].NAME, "PRESET_3");
 
     //flash_writing = true;
@@ -248,10 +262,22 @@ ret_code_t write_factory_presets()
     preset_32[3].TIME_AUTO_LEVEL = 444;
     preset_32[3].IMPEDANCE       = LOW_Z;
     preset_32[3].COLOR           = COLOR_4;
+    preset_32[3].HIGH_VOYEL      = ae;
+    preset_32[3].LOW_VOYEL       = uh;
+    preset_32[3].MIX_DRY_WET     = 127;
+    preset_32[3].FILTER_TYPE     = LOW_PASS;
     strcpy(preset_32[3].NAME, "PRESET_4");
 
     //flash_writing = true;
     write_preset_config(3);
+    //while(flash_writing);
+
+    calibration_32.STATUS   = NONE;
+    calibration_32.MAX_DATA = 0;
+    calibration_32.MIN_DATA = 0;
+
+    //flash_writing = true;
+    write_calibration_config();
     //while(flash_writing);
 
     return NRF_SUCCESS;
@@ -273,6 +299,16 @@ void write_preset_config(uint8_t idx_prst)
 /*******************************************************************************
 
 *******************************************************************************/
+void write_calibration_config()
+{
+   uint32_t err_code;
+   err_code = m_fds_write_calibration(FILE_ID_CALIB, RECORD_KEY_CALIB, &calibration_32);
+   APP_ERROR_CHECK(err_code);
+}
+
+/*******************************************************************************
+
+*******************************************************************************/
 ret_code_t m_fds_write_preset(uint16_t FILE_ID, uint16_t RECORD_KEY, preset_config_32_t * write_data)
 { 
     ret_code_t ret;
@@ -287,6 +323,49 @@ ret_code_t m_fds_write_preset(uint16_t FILE_ID, uint16_t RECORD_KEY, preset_conf
     record.key                  = RECORD_KEY;
     record.data.p_data          = write_data;  
     record.data.length_words    = ( sizeof(preset_config_32_t) + 3 ) / sizeof(uint32_t);
+  
+    ret_code_t rc = fds_record_find(FILE_ID, RECORD_KEY , &desc, &tok);  //Search for record. Update if found else write a new one
+
+    if (rc == FDS_SUCCESS)
+    {   
+        //NRF_LOG_INFO("PRESET Variables Record was found thus it is being updated");
+        rc = fds_record_update(&desc, &record);
+        //APP_ERROR_CHECK(rc);
+        if(rc == FDS_ERR_NO_SPACE_IN_FLASH)
+        {
+             ret_code_t rc = fds_gc();// try to do garbage collection
+             APP_ERROR_CHECK(rc);
+        }
+
+    }
+    else
+    {
+        ret_code_t ret = fds_record_write(&record_desc, &record);
+        APP_ERROR_CHECK(ret);
+        //NRF_LOG_INFO("First time writing PRESET record");
+    }
+
+    return NRF_SUCCESS;
+    
+}
+
+/*******************************************************************************
+
+*******************************************************************************/
+ret_code_t m_fds_write_calibration(uint16_t FILE_ID, uint16_t RECORD_KEY, calib_config_32_t * write_data)
+{ 
+    ret_code_t ret;
+
+    fds_record_t        record;
+    fds_record_desc_t   record_desc;
+
+    fds_record_desc_t desc = {0};
+    fds_find_token_t  tok  = {0};
+
+    record.file_id              = FILE_ID;
+    record.key                  = RECORD_KEY;
+    record.data.p_data          = write_data;  
+    record.data.length_words    = ( sizeof(calib_config_32_t) + 3 ) / sizeof(uint32_t);
   
     ret_code_t rc = fds_record_find(FILE_ID, RECORD_KEY , &desc, &tok);  //Search for record. Update if found else write a new one
 
@@ -338,6 +417,10 @@ void load_flash_config()
         preset_32[idx_prst].TIME_AUTO_LEVEL = data->TIME_AUTO_LEVEL;
         preset_32[idx_prst].IMPEDANCE       = data->IMPEDANCE;
         preset_32[idx_prst].COLOR           = data->COLOR;
+        preset_32[idx_prst].HIGH_VOYEL      = data->HIGH_VOYEL;
+        preset_32[idx_prst].LOW_VOYEL       = data->LOW_VOYEL;
+        preset_32[idx_prst].MIX_DRY_WET     = data->MIX_DRY_WET;
+        preset_32[idx_prst].FILTER_TYPE     = data->FILTER_TYPE;
         strcpy(preset_32[idx_prst].NAME,      data->NAME);
 
         preset[idx_prst].FC1             = preset_32[idx_prst].FC1;
@@ -352,6 +435,10 @@ void load_flash_config()
         preset[idx_prst].TIME_AUTO_LEVEL = preset_32[idx_prst].TIME_AUTO_LEVEL;
         preset[idx_prst].IMPEDANCE       = preset_32[idx_prst].IMPEDANCE;
         preset[idx_prst].COLOR           = preset_32[idx_prst].COLOR;
+        preset[idx_prst].HIGH_VOYEL      = preset_32[idx_prst].HIGH_VOYEL;
+        preset[idx_prst].LOW_VOYEL       = preset_32[idx_prst].LOW_VOYEL;
+        preset[idx_prst].MIX_DRY_WET     = preset_32[idx_prst].MIX_DRY_WET;
+        preset[idx_prst].FILTER_TYPE     = preset_32[idx_prst].FILTER_TYPE;
         strcpy(preset[idx_prst].NAME,      preset_32[idx_prst].NAME);
 
         #ifdef DEBUG_PRESET
@@ -369,10 +456,35 @@ void load_flash_config()
           NRF_LOG_INFO("TIME_AUTO_LEVEL =    %d", preset[idx_prst].TIME_AUTO_LEVEL);
           NRF_LOG_INFO("IMPEDANCE =          %d", preset[idx_prst].IMPEDANCE); 
           NRF_LOG_INFO("COLOR =              %d", preset[idx_prst].COLOR); 
+          NRF_LOG_INFO("HIGH_VOYEL =         %d", preset[idx_prst].HIGH_VOYEL); 
+          NRF_LOG_INFO("LOW_VOYEL =          %d", preset[idx_prst].LOW_VOYEL);
+          NRF_LOG_INFO("MIX_DRY_WET =        %d", preset[idx_prst].MIX_DRY_WET); 
+          NRF_LOG_INFO("FILTER_TYPE =        %d", preset[idx_prst].FILTER_TYPE); 
           NRF_LOG_INFO("NAME =               %s", preset[idx_prst].NAME); 
         #endif
 
     }
+
+    //Load Calibration Config
+    calib_config_32_t * data_calib;
+
+    data_calib = m_fds_read_calibration(FILE_ID_CALIB, RECORD_KEY_CALIB);
+
+    calibration_32.STATUS           = data_calib->STATUS;
+    calibration_32.MAX_DATA         = data_calib->MAX_DATA;
+    calibration_32.MIN_DATA         = data_calib->MIN_DATA;
+
+    calibration.STATUS              = calibration_32.STATUS;
+    calibration.MAX_DATA            = calibration_32.MAX_DATA;
+    calibration.MIN_DATA            = calibration_32.MIN_DATA;
+
+    #ifdef DEBUG_PRESET
+          NRF_LOG_INFO("***************************************");        
+          NRF_LOG_INFO("CALIBRATION");
+          NRF_LOG_INFO("STATUS =                %d", data_calib->STATUS);
+          NRF_LOG_INFO("MAX_DATA =              %d", data_calib->MAX_DATA);
+          NRF_LOG_INFO("MIN_DATA =              %d", data_calib->MIN_DATA);
+    #endif
 
 }
 
@@ -409,6 +521,36 @@ preset_config_32_t * m_fds_read_preset(uint16_t FILE_ID, uint16_t RECORD_KEY)
 /*******************************************************************************
 
 *******************************************************************************/
+calib_config_32_t * m_fds_read_calibration(uint16_t FILE_ID, uint16_t RECORD_KEY)
+{	
+  calib_config_32_t * data;
+  uint32_t  err_code;
+
+  fds_flash_record_t  flash_record;
+  fds_find_token_t    ftok;
+  /* It is required to zero the token before first use. */
+  memset(&ftok, 0x00, sizeof(fds_find_token_t));
+  
+  err_code = fds_record_find(FILE_ID, RECORD_KEY, &my_record_desc, &ftok);
+  APP_ERROR_CHECK(err_code);
+
+  err_code = fds_record_open(&my_record_desc, &flash_record);
+  APP_ERROR_CHECK(err_code);
+
+  //NRF_LOG_INFO("Found Record ID = %d \r\n",my_record_desc.record_id);			
+  data = (calib_config_32_t *) flash_record.p_data;	
+   
+  /* Access the record through the flash_record structure. */
+  /* Close the record when done. */
+  err_code = fds_record_close(&my_record_desc);
+  APP_ERROR_CHECK(err_code);
+      
+  return data;
+}
+
+/*******************************************************************************
+
+*******************************************************************************/
 void save_preset2flash(uint8_t idx_prst)
 {	
     preset_32[idx_prst].FC1             = preset[idx_prst].FC1;
@@ -423,6 +565,10 @@ void save_preset2flash(uint8_t idx_prst)
     preset_32[idx_prst].TIME_AUTO_LEVEL = preset[idx_prst].TIME_AUTO_LEVEL;
     preset_32[idx_prst].IMPEDANCE       = preset[idx_prst].IMPEDANCE;
     preset_32[idx_prst].COLOR           = preset[idx_prst].COLOR;
+    preset_32[idx_prst].HIGH_VOYEL      = preset[idx_prst].HIGH_VOYEL;
+    preset_32[idx_prst].LOW_VOYEL       = preset[idx_prst].LOW_VOYEL;
+    preset_32[idx_prst].MIX_DRY_WET     = preset[idx_prst].MIX_DRY_WET;
+    preset_32[idx_prst].FILTER_TYPE     = preset[idx_prst].FILTER_TYPE;
     strcpy(preset_32[idx_prst].NAME,      "");
     strcpy(preset_32[idx_prst].NAME,      preset[idx_prst].NAME);
 
@@ -441,6 +587,10 @@ void save_preset2flash(uint8_t idx_prst)
       NRF_LOG_INFO("TIME_AUTO_LEVEL =    %d", preset_32[idx_prst].TIME_AUTO_LEVEL);
       NRF_LOG_INFO("IMPEDANCE =          %d", preset_32[idx_prst].IMPEDANCE);
       NRF_LOG_INFO("COLOR =              %d", preset_32[idx_prst].COLOR);
+      NRF_LOG_INFO("HIGH_VOYEL =         %d", preset_32[idx_prst].HIGH_VOYEL); 
+      NRF_LOG_INFO("LOW_VOYEL =          %d", preset_32[idx_prst].LOW_VOYEL);
+      NRF_LOG_INFO("MIX_DRY_WET =        %d", preset_32[idx_prst].MIX_DRY_WET); 
+      NRF_LOG_INFO("FILTER_TYPE =        %d", preset_32[idx_prst].FILTER_TYPE); 
       NRF_LOG_INFO("NAME =               %s", preset_32[idx_prst].NAME); 
     #endif
 

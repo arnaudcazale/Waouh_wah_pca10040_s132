@@ -534,7 +534,9 @@ static void services_init(void)
 {
         ret_code_t          err_code;
         nrf_ble_qwr_init_t  qwr_init = {0};
-        ble_wah_init_t      wah_init = {0};
+        ble_wah_init_t      wah_init;
+
+        wah_init.initial_calibration.STATUS = NONE; //To load from flash
 
         // Initialize Queued Write Module.
         qwr_init.error_handler = nrf_qwr_error_handler;

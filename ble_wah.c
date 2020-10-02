@@ -6,7 +6,8 @@
 #include "boards.h"
 #include "nrf_log.h"
 
-extern volatile preset_config_8_t preset[PRESET_NUMBER];
+extern volatile preset_config_8_t   preset[PRESET_NUMBER];
+extern volatile calib_config_8_t    calibration;
 
 uint32_t ble_wah_init(ble_wah_t * p_wah, const ble_wah_init_t * p_wah_init)
 {
@@ -77,6 +78,13 @@ uint32_t ble_wah_init(ble_wah_t * p_wah, const ble_wah_init_t * p_wah_init)
 
         // Add Custom Value characteristic
     err_code = preset_4_char_add(p_wah, p_wah_init);
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+            // Add Custom Value characteristic
+    err_code = calibration_char_add(p_wah, p_wah_init);
     if (err_code != NRF_SUCCESS)
     {
         return err_code;
@@ -670,6 +678,7 @@ static uint32_t preset_4_char_add(ble_wah_t * p_wah, const ble_wah_init_t * p_wa
     attr_md.vloc       = BLE_GATTS_VLOC_STACK;
     attr_md.rd_auth    = 0;
     attr_md.wr_auth    = 0;
+
     attr_md.vlen       = 0;
 
     memset(&attr_char_value, 0, sizeof(attr_char_value));
@@ -684,6 +693,66 @@ static uint32_t preset_4_char_add(ble_wah_t * p_wah, const ble_wah_init_t * p_wa
     err_code = sd_ble_gatts_characteristic_add(p_wah->service_handle, &char_md,
                                                &attr_char_value,
                                                &p_wah->preset_4_handles);
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    return NRF_SUCCESS;
+}
+
+/**@brief Function for adding the Custom Value characteristic.
+ *
+ * @param[in]   p_cus        Custom Service structure.
+ * @param[in]   p_cus_init   Information needed to initialize the service.
+ *
+ * @return      NRF_SUCCESS on success, otherwise an error code.
+ */
+static uint32_t calibration_char_add(ble_wah_t * p_wah, const ble_wah_init_t * p_wah_init)
+{
+    uint32_t                err_code;
+    ble_gatts_char_md_t     char_md;
+    ble_gatts_attr_t        attr_char_value;
+    ble_uuid_t              ble_uuid;
+    ble_gatts_attr_md_t     attr_md;
+    //ble_wah_calib_config_t  data = p_wah_init->initial_calibration;
+
+    memset(&char_md, 0, sizeof(char_md));
+
+    char_md.char_props.read          = 1;
+    char_md.char_props.write         = 1;
+    char_md.char_props.write_wo_resp = 0;
+    char_md.p_char_user_desc         = NULL;
+    char_md.p_char_pf                = NULL;
+    char_md.p_user_desc_md           = NULL;
+    char_md.p_cccd_md                = NULL;
+    char_md.p_sccd_md                = NULL;
+
+    ble_uuid.type = p_wah->uuid_type;
+    ble_uuid.uuid = CALIBRATION_CHAR_UUID;
+		
+    memset(&attr_md, 0, sizeof(attr_md));
+
+    BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(&attr_md.read_perm);
+    BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(&attr_md.write_perm);
+
+    attr_md.vloc       = BLE_GATTS_VLOC_STACK;
+    attr_md.rd_auth    = 0;
+    attr_md.wr_auth    = 0;
+    attr_md.vlen       = 0;
+
+    memset(&attr_char_value, 0, sizeof(attr_char_value));
+
+    attr_char_value.p_uuid    = &ble_uuid;
+    attr_char_value.p_attr_md = &attr_md;
+    attr_char_value.init_len  = sizeof(calib_config_8_t);
+    attr_char_value.init_offs = 0;
+    attr_char_value.p_value   = &calibration;
+    attr_char_value.max_len   = sizeof(calib_config_8_t);
+
+    err_code = sd_ble_gatts_characteristic_add(p_wah->service_handle, &char_md,
+                                               &attr_char_value,
+                                               &p_wah->calibration_handles);
     if (err_code != NRF_SUCCESS)
     {
         return err_code;
@@ -813,6 +882,10 @@ void check_data_received(uint8_t idx_prst, uint8_t * data, uint16_t length)
     preset[idx_prst].TIME_AUTO_LEVEL = data[INDEX_TIME_AUTO_LEVEL] | (uint16_t)data[INDEX_TIME_AUTO_LEVEL + 1] << 8; 
     preset[idx_prst].IMPEDANCE       = data[INDEX_IMPEDANCE];
     preset[idx_prst].COLOR           = data[INDEX_COLOR];
+    preset[idx_prst].HIGH_VOYEL      = data[INDEX_HIGH_VOYEL];
+    preset[idx_prst].LOW_VOYEL       = data[INDEX_LOW_VOYEL];
+    preset[idx_prst].MIX_DRY_WET     = data[INDEX_MIX_DRY_WET];
+    preset[idx_prst].FILTER_TYPE     = data[INDEX_FILTER_TYPE];
     strcpy(preset[idx_prst].NAME,      "");
     strcpy(preset[idx_prst].NAME,      &data[INDEX_NAME]);
 
@@ -842,6 +915,10 @@ void check_data_received(uint8_t idx_prst, uint8_t * data, uint16_t length)
               preset[i].TIME_AUTO_LEVEL = preset[idx_prst].TIME_AUTO_LEVEL;
               preset[i].IMPEDANCE       = preset[idx_prst].IMPEDANCE;
               preset[i].COLOR           = preset[idx_prst].COLOR;
+              preset[i].HIGH_VOYEL      = preset[idx_prst].HIGH_VOYEL;
+              preset[i].LOW_VOYEL       = preset[idx_prst].LOW_VOYEL;
+              preset[i].MIX_DRY_WET     = preset[idx_prst].MIX_DRY_WET;
+              preset[i].FILTER_TYPE     = preset[idx_prst].FILTER_TYPE;
             
               save_preset2flash(i);
 
@@ -878,6 +955,10 @@ void debug_preset (uint8_t idx_prst)
       NRF_LOG_INFO("TIME_AUTO_LEVEL =    %d", preset[idx_prst].TIME_AUTO_LEVEL);
       NRF_LOG_INFO("IMPEDANCE =          %d", preset[idx_prst].IMPEDANCE); 
       NRF_LOG_INFO("COLOR =              %d", preset[idx_prst].COLOR); 
+      NRF_LOG_INFO("HIGH_VOYEL =         %d", preset[idx_prst].HIGH_VOYEL); 
+      NRF_LOG_INFO("LOW_VOYEL =          %d", preset[idx_prst].LOW_VOYEL);
+      NRF_LOG_INFO("MIX_DRY_WET =        %d", preset[idx_prst].MIX_DRY_WET); 
+      NRF_LOG_INFO("FILTER_TYPE =        %d", preset[idx_prst].FILTER_TYPE); 
       NRF_LOG_INFO("NAME =               %s", preset[idx_prst].NAME); 
     #endif
 }

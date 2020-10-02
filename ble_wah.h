@@ -16,6 +16,7 @@
 #define PRESET_3_CHAR_UUID             0x1404
 #define PRESET_4_CHAR_UUID             0x1405
 #define PEDAL_VALUE_CHAR_UUID          0x1406
+#define CALIBRATION_CHAR_UUID          0x1407
 
 #define NRF_BLE_MAX_MTU_SIZE 247
 
@@ -59,10 +60,17 @@ typedef struct
     ble_wah_evt_type_t evt_type;
     uint8_t          * p_data;
     uint16_t           length;
-} ble_wah_evt_t;       
+} ble_wah_evt_t; 
+
+typedef PACKED( struct
+{
+    uint8_t    STATUS;
+    uint16_t   MIN_DATA;
+    uint16_t   MAX_DATA;
+
+}) ble_wah_calib_config_t;      
 
          
-
 // Forward declaration of the ble_cus_t type.
 typedef struct ble_wah_s ble_wah_t;
 
@@ -74,7 +82,8 @@ typedef void (*ble_wah_evt_handler_t) (ble_wah_t * p_wah, ble_wah_evt_t * p_evt)
 typedef struct
 {
     ble_wah_evt_handler_t         evt_handler;                /**< Event handler to be called for handling events in the Custom Service. */
-    int16_t                       initial_pedal_value;          /**< Initial custom value */
+    int16_t                       initial_pedal_value;        /**< Initial custom value */
+    ble_wah_calib_config_t        initial_calibration;
     ble_srv_cccd_security_mode_t  wah_value_char_attr_md;     /**< Initial security level for Custom characteristics attribute */
 } ble_wah_init_t;
 
@@ -89,6 +98,7 @@ struct ble_wah_s
     ble_gatts_char_handles_t      preset_3_handles;
     ble_gatts_char_handles_t      preset_4_handles;
     ble_gatts_char_handles_t      pedal_value_handles;
+    ble_gatts_char_handles_t      calibration_handles;
     bool                          is_preset_selection_notif_enabled;        /**< Variable to indicate if the peer has enabled notification of the characteristic.*/
     bool                          is_pedal_value_notif_enabled; 
     uint16_t                      conn_handle;                              /**< Handle of thunknow type current connection (as provided by the BLE stack, is BLE_CONN_HANDLE_INVALID if not in a connection). */
@@ -118,6 +128,7 @@ static uint32_t preset_1_char_add(ble_wah_t *, const ble_wah_init_t *);
 static uint32_t preset_2_char_add(ble_wah_t *, const ble_wah_init_t *);
 static uint32_t preset_3_char_add(ble_wah_t *, const ble_wah_init_t *);
 static uint32_t preset_4_char_add(ble_wah_t *, const ble_wah_init_t *);
+static uint32_t calibration_char_add(ble_wah_t *, const ble_wah_init_t *);
 
 uint32_t preset_selection_value_update(ble_wah_t *, uint8_t);
 uint32_t pedal_data_value_update(ble_wah_t *, uint16_t);
