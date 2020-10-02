@@ -101,6 +101,10 @@ struct ble_wah_s
     ble_gatts_char_handles_t      calibration_handles;
     bool                          is_preset_selection_notif_enabled;        /**< Variable to indicate if the peer has enabled notification of the characteristic.*/
     bool                          is_pedal_value_notif_enabled; 
+    bool                          is_preset_1_notif_enabled; 
+    bool                          is_preset_2_notif_enabled; 
+    bool                          is_preset_3_notif_enabled; 
+    bool                          is_preset_4_notif_enabled; 
     uint16_t                      conn_handle;                              /**< Handle of thunknow type current connection (as provided by the BLE stack, is BLE_CONN_HANDLE_INVALID if not in a connection). */
     uint8_t                       uuid_type; 
 };
@@ -132,8 +136,15 @@ static uint32_t calibration_char_add(ble_wah_t *, const ble_wah_init_t *);
 
 uint32_t preset_selection_value_update(ble_wah_t *, uint8_t);
 uint32_t pedal_data_value_update(ble_wah_t *, uint16_t);
+uint32_t preset_1_update(ble_wah_t *);
+uint32_t preset_2_update(ble_wah_t *);
+uint32_t preset_3_update(ble_wah_t *);
+uint32_t preset_4_update(ble_wah_t *);
 void check_data_received(uint8_t, uint8_t *, uint16_t);
 void update_preset(uint8_t);
-void debug_preset(uint8_t);
+static void check_and_save_same_preset_name(uint8_t);
+static void debug_preset(uint8_t);
+static void send_notif(uint8_t);
+
 
 #endif // BLE_WAH_H__

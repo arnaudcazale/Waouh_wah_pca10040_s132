@@ -1069,7 +1069,6 @@ int main(void)
 
     timers_init();
     buttons_leds_init(&erase_bonds, &restore_factory);
-
     power_management_init();
 
     load_presets_from_flash(restore_factory);

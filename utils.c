@@ -573,7 +573,7 @@ void save_preset2flash(uint8_t idx_prst)
     strcpy(preset_32[idx_prst].NAME,      preset[idx_prst].NAME);
 
     #ifdef DEBUG_PRESET
-      NRF_LOG_INFO("***************************************");        
+      NRF_LOG_INFO("************INTO FLASH*****************");        
       NRF_LOG_INFO("PRESET_              %d", idx_prst);
       NRF_LOG_INFO("FC1 =                %d", preset_32[idx_prst].FC1);
       NRF_LOG_INFO("FC2 =                %d", preset_32[idx_prst].FC2);

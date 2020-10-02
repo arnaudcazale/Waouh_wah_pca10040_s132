@@ -8,6 +8,8 @@
 
 extern volatile preset_config_8_t   preset[PRESET_NUMBER];
 extern volatile calib_config_8_t    calibration;
+static ble_wah_t * m_wah_service;
+
 
 uint32_t ble_wah_init(ble_wah_t * p_wah, const ble_wah_init_t * p_wah_init)
 {
@@ -15,12 +17,17 @@ uint32_t ble_wah_init(ble_wah_t * p_wah, const ble_wah_init_t * p_wah_init)
     {
         return NRF_ERROR_NULL;
     }
-
+    
     uint32_t   err_code;
     ble_uuid_t ble_uuid;
 
+    m_wah_service = p_wah;
     p_wah->is_preset_selection_notif_enabled        = false;
     p_wah->is_pedal_value_notif_enabled             = false;
+    p_wah->is_preset_1_notif_enabled                = false;
+    p_wah->is_preset_2_notif_enabled                = false;
+    p_wah->is_preset_3_notif_enabled                = false;
+    p_wah->is_preset_4_notif_enabled                = false;
 
     // Initialize service structure
     p_wah->evt_handler               = p_wah_init->evt_handler;
@@ -323,6 +330,7 @@ static void on_autorize_req(ble_wah_t * p_wah, ble_evt_t const * p_ble_evt)
 //    }
    
 }
+
 /**@brief Function for adding the Custom Value characteristic.
  *
  * @param[in]   p_cus        Custom Service structure.
@@ -475,12 +483,23 @@ static uint32_t preset_1_char_add(ble_wah_t * p_wah, const ble_wah_init_t * p_wa
 {
     uint32_t            err_code;
     ble_gatts_char_md_t char_md;
+    ble_gatts_attr_md_t cccd_md;
     ble_gatts_attr_t    attr_char_value;
     ble_uuid_t          ble_uuid;
     ble_gatts_attr_md_t attr_md;
 
+    // Add Custom Value characteristic
+    memset(&cccd_md, 0, sizeof(cccd_md));
+
+    //  Read  operation on cccd should be possible without authentication.
+    BLE_GAP_CONN_SEC_MODE_SET_OPEN(&cccd_md.read_perm);
+    BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(&cccd_md.write_perm);
+  
+    cccd_md.vloc       = BLE_GATTS_VLOC_STACK;
+
     memset(&char_md, 0, sizeof(char_md));
 
+    char_md.char_props.notify        = 1;
     char_md.char_props.read          = 1;
     char_md.char_props.write         = 1;
     char_md.char_props.write_wo_resp = 0;
@@ -534,12 +553,23 @@ static uint32_t preset_2_char_add(ble_wah_t * p_wah, const ble_wah_init_t * p_wa
 {
     uint32_t            err_code;
     ble_gatts_char_md_t char_md;
+    ble_gatts_attr_md_t cccd_md;
     ble_gatts_attr_t    attr_char_value;
     ble_uuid_t          ble_uuid;
     ble_gatts_attr_md_t attr_md;
 
+    // Add Custom Value characteristic
+    memset(&cccd_md, 0, sizeof(cccd_md));
+
+    //  Read  operation on cccd should be possible without authentication.
+    BLE_GAP_CONN_SEC_MODE_SET_OPEN(&cccd_md.read_perm);
+    BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(&cccd_md.write_perm);
+  
+    cccd_md.vloc       = BLE_GATTS_VLOC_STACK;
+
     memset(&char_md, 0, sizeof(char_md));
 
+    char_md.char_props.notify        = 1;
     char_md.char_props.read          = 1;
     char_md.char_props.write         = 1;
     char_md.char_props.write_wo_resp = 0;
@@ -593,12 +623,23 @@ static uint32_t preset_3_char_add(ble_wah_t * p_wah, const ble_wah_init_t * p_wa
 {
     uint32_t            err_code;
     ble_gatts_char_md_t char_md;
+    ble_gatts_attr_md_t cccd_md;
     ble_gatts_attr_t    attr_char_value;
     ble_uuid_t          ble_uuid;
     ble_gatts_attr_md_t attr_md;
 
+    // Add Custom Value characteristic
+    memset(&cccd_md, 0, sizeof(cccd_md));
+
+    //  Read  operation on cccd should be possible without authentication.
+    BLE_GAP_CONN_SEC_MODE_SET_OPEN(&cccd_md.read_perm);
+    BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(&cccd_md.write_perm);
+  
+    cccd_md.vloc       = BLE_GATTS_VLOC_STACK;
+
     memset(&char_md, 0, sizeof(char_md));
 
+    char_md.char_props.notify        = 1;
     char_md.char_props.read          = 1;
     char_md.char_props.write         = 1;
     char_md.char_props.write_wo_resp = 0;
@@ -652,12 +693,23 @@ static uint32_t preset_4_char_add(ble_wah_t * p_wah, const ble_wah_init_t * p_wa
 {
     uint32_t            err_code;
     ble_gatts_char_md_t char_md;
+    ble_gatts_attr_md_t cccd_md;
     ble_gatts_attr_t    attr_char_value;
     ble_uuid_t          ble_uuid;
     ble_gatts_attr_md_t attr_md;
 
+    // Add Custom Value characteristic
+    memset(&cccd_md, 0, sizeof(cccd_md));
+
+    //  Read  operation on cccd should be possible without authentication.
+    BLE_GAP_CONN_SEC_MODE_SET_OPEN(&cccd_md.read_perm);
+    BLE_GAP_CONN_SEC_MODE_SET_ENC_NO_MITM(&cccd_md.write_perm);
+  
+    cccd_md.vloc       = BLE_GATTS_VLOC_STACK;
+
     memset(&char_md, 0, sizeof(char_md));
 
+    char_md.char_props.notify        = 1;
     char_md.char_props.read          = 1;
     char_md.char_props.write         = 1;
     char_md.char_props.write_wo_resp = 0;
@@ -766,7 +818,8 @@ static uint32_t calibration_char_add(ble_wah_t * p_wah, const ble_wah_init_t * p
  *
  * 
  */
-uint32_t preset_selection_value_update(ble_wah_t * p_wah, uint8_t preset_selection_value){
+uint32_t preset_selection_value_update(ble_wah_t * p_wah, uint8_t preset_selection_value)
+{
  
     if (p_wah == NULL)
     {
@@ -819,7 +872,8 @@ uint32_t preset_selection_value_update(ble_wah_t * p_wah, uint8_t preset_selecti
  *
  * 
  */
-uint32_t pedal_data_value_update(ble_wah_t * p_wah, uint16_t data){
+uint32_t pedal_data_value_update(ble_wah_t * p_wah, uint16_t data)
+{
 
     if (p_wah == NULL)
     {
@@ -868,6 +922,222 @@ uint32_t pedal_data_value_update(ble_wah_t * p_wah, uint16_t data){
     return err_code;
 }
 
+/**@brief Function for adding the Custom Value characteristic.
+ *
+ * 
+ */
+uint32_t preset_1_update(ble_wah_t * p_wah)
+{
+ 
+    if (p_wah == NULL)
+    {
+        return NRF_ERROR_NULL;
+    }
+
+    uint32_t err_code = NRF_SUCCESS;
+    ble_gatts_value_t gatts_value;
+
+    // Initialize value struct.
+    memset(&gatts_value, 0, sizeof(gatts_value));
+
+    gatts_value.len     = sizeof(preset_config_8_t);
+    gatts_value.offset  = 0;
+    gatts_value.p_value = (uint8_t*)&preset[0];
+
+    // Update database.
+    err_code = sd_ble_gatts_value_set(p_wah->conn_handle,
+                                      p_wah->preset_1_handles.value_handle,
+                                      &gatts_value);
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    // Send value if connected and notifying.
+    if ((p_wah->conn_handle != BLE_CONN_HANDLE_INVALID)) 
+    {
+        ble_gatts_hvx_params_t hvx_params;
+ 
+        memset(&hvx_params, 0, sizeof(hvx_params));
+
+        hvx_params.handle = p_wah->preset_1_handles.value_handle;
+        hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+        hvx_params.offset = gatts_value.offset;
+        hvx_params.p_len  = &gatts_value.len;
+        hvx_params.p_data = gatts_value.p_value;
+
+        err_code = sd_ble_gatts_hvx(p_wah->conn_handle, &hvx_params);
+    }
+    else
+    {
+        err_code = NRF_ERROR_INVALID_STATE;
+    }
+
+    return err_code;
+}
+
+/**@brief Function for adding the Custom Value characteristic.
+ *
+ * 
+ */
+uint32_t preset_2_update(ble_wah_t * p_wah)
+{
+ 
+    if (p_wah == NULL)
+    {
+        return NRF_ERROR_NULL;
+    }
+
+    uint32_t err_code = NRF_SUCCESS;
+    ble_gatts_value_t gatts_value;
+
+    // Initialize value struct.
+    memset(&gatts_value, 0, sizeof(gatts_value));
+
+    gatts_value.len     = sizeof(preset_config_8_t);
+    gatts_value.offset  = 0;
+    gatts_value.p_value = (uint8_t*)&preset[1];
+
+    // Update database.
+    err_code = sd_ble_gatts_value_set(p_wah->conn_handle,
+                                      p_wah->preset_2_handles.value_handle,
+                                      &gatts_value);
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    // Send value if connected and notifying.
+    if ((p_wah->conn_handle != BLE_CONN_HANDLE_INVALID)) 
+    {
+        ble_gatts_hvx_params_t hvx_params;
+ 
+        memset(&hvx_params, 0, sizeof(hvx_params));
+
+        hvx_params.handle = p_wah->preset_2_handles.value_handle;
+        hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+        hvx_params.offset = gatts_value.offset;
+        hvx_params.p_len  = &gatts_value.len;
+        hvx_params.p_data = gatts_value.p_value;
+
+        err_code = sd_ble_gatts_hvx(p_wah->conn_handle, &hvx_params);
+    }
+    else
+    {
+        err_code = NRF_ERROR_INVALID_STATE;
+    }
+
+    return err_code;
+}
+
+/**@brief Function for adding the Custom Value characteristic.
+ *
+ * 
+ */
+uint32_t preset_3_update(ble_wah_t * p_wah)
+{
+ 
+    if (p_wah == NULL)
+    {
+        return NRF_ERROR_NULL;
+    }
+
+    uint32_t err_code = NRF_SUCCESS;
+    ble_gatts_value_t gatts_value;
+
+    // Initialize value struct.
+    memset(&gatts_value, 0, sizeof(gatts_value));
+
+    gatts_value.len     = sizeof(preset_config_8_t);
+    gatts_value.offset  = 0;
+    gatts_value.p_value = (uint8_t*)&preset[2];
+
+    // Update database.
+    err_code = sd_ble_gatts_value_set(p_wah->conn_handle,
+                                      p_wah->preset_3_handles.value_handle,
+                                      &gatts_value);
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    // Send value if connected and notifying.
+    if ((p_wah->conn_handle != BLE_CONN_HANDLE_INVALID)) 
+    {
+        ble_gatts_hvx_params_t hvx_params;
+ 
+        memset(&hvx_params, 0, sizeof(hvx_params));
+
+        hvx_params.handle = p_wah->preset_3_handles.value_handle;
+        hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+        hvx_params.offset = gatts_value.offset;
+        hvx_params.p_len  = &gatts_value.len;
+        hvx_params.p_data = gatts_value.p_value;
+
+        err_code = sd_ble_gatts_hvx(p_wah->conn_handle, &hvx_params);
+    }
+    else
+    {
+        err_code = NRF_ERROR_INVALID_STATE;
+    }
+
+    return err_code;
+}
+
+/**@brief Function for adding the Custom Value characteristic.
+ *
+ * 
+ */
+uint32_t preset_4_update(ble_wah_t * p_wah)
+{
+ 
+    if (p_wah == NULL)
+    {
+        return NRF_ERROR_NULL;
+    }
+
+    uint32_t err_code = NRF_SUCCESS;
+    ble_gatts_value_t gatts_value;
+
+    // Initialize value struct.
+    memset(&gatts_value, 0, sizeof(gatts_value));
+
+    gatts_value.len     = sizeof(preset_config_8_t);
+    gatts_value.offset  = 0;
+    gatts_value.p_value = (uint8_t*)&preset[3];
+
+    // Update database.
+    err_code = sd_ble_gatts_value_set(p_wah->conn_handle,
+                                      p_wah->preset_4_handles.value_handle,
+                                      &gatts_value);
+    if (err_code != NRF_SUCCESS)
+    {
+        return err_code;
+    }
+
+    // Send value if connected and notifying.
+    if ((p_wah->conn_handle != BLE_CONN_HANDLE_INVALID)) 
+    {
+        ble_gatts_hvx_params_t hvx_params;
+ 
+        memset(&hvx_params, 0, sizeof(hvx_params));
+
+        hvx_params.handle = p_wah->preset_4_handles.value_handle;
+        hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;
+        hvx_params.offset = gatts_value.offset;
+        hvx_params.p_len  = &gatts_value.len;
+        hvx_params.p_data = gatts_value.p_value;
+
+        err_code = sd_ble_gatts_hvx(p_wah->conn_handle, &hvx_params);
+    }
+    else
+    {
+        err_code = NRF_ERROR_INVALID_STATE;
+    }
+
+    return err_code;
+}
+
 void check_data_received(uint8_t idx_prst, uint8_t * data, uint16_t length)
 {
     preset[idx_prst].FC1             = data[INDEX_FC1];
@@ -889,16 +1159,29 @@ void check_data_received(uint8_t idx_prst, uint8_t * data, uint16_t length)
     strcpy(preset[idx_prst].NAME,      "");
     strcpy(preset[idx_prst].NAME,      &data[INDEX_NAME]);
 
-    //Si bit "MODE" = 1, sauvergarde en flash, sinon, c'est le mode edition (changement on the fly)
+    //Si bit "STATUS" = 1, sauvergarde en flash, sinon, c'est le mode edition (changement on the fly)
     if(preset[idx_prst].STATUS == PRESET_SAVE_STATUS)
     {
         save_preset2flash(idx_prst);
+        //Update Flash contents by sending notification of actual preset
+        send_notif(idx_prst);
 
         //Si un autre preset à le meme nom que celui-ci, il faut le sauver en flash aussi
-        for(uint8_t i=0; i<PRESET_NUMBER; i++)
+        check_and_save_same_preset_name(idx_prst);
+
+    ///Si bit "MODE" = 0, Command SPI & I2C chips in real time  
+    }else if (preset[idx_prst].STATUS == PRESET_EDIT_STATUS)
+    {
+        update_preset(idx_prst);
+    }
+}
+
+void check_and_save_same_preset_name(uint8_t idx_prst)
+{
+    for(uint8_t i=0; i<PRESET_NUMBER; i++)
+    {
+        if(i != idx_prst)
         {
-          if(i != idx_prst)
-          {
             if(!strcmp(preset[idx_prst].NAME, preset[i].NAME))
             {
               NRF_LOG_INFO("PRESET_%d.NAME == PRESET_%d.NAME  (%s) ",  idx_prst, i, preset[idx_prst].NAME);
@@ -919,17 +1202,35 @@ void check_data_received(uint8_t idx_prst, uint8_t * data, uint16_t length)
               preset[i].LOW_VOYEL       = preset[idx_prst].LOW_VOYEL;
               preset[i].MIX_DRY_WET     = preset[idx_prst].MIX_DRY_WET;
               preset[i].FILTER_TYPE     = preset[idx_prst].FILTER_TYPE;
-            
+  
               save_preset2flash(i);
+              //Update Flash contents by sending notification of actual preset
+              send_notif(i);
 
             }
-          }
         }
-        
-    ///Si bit "MODE" = 0, Command SPI & I2C chips in real time  
-    }else if (preset[idx_prst].STATUS == PRESET_EDIT_STATUS)
+    }
+}
+
+void send_notif(uint8_t idx_prst)
+{
+    switch(idx_prst)
     {
-        update_preset(idx_prst);
+      case 0:
+          preset_1_update(m_wah_service);
+        break;
+      case 1:
+          preset_2_update(m_wah_service);
+        break;
+      case 2:
+          preset_3_update(m_wah_service);
+        break;
+      case 3:
+          preset_4_update(m_wah_service);
+        break;
+      default:
+
+        break;
     }
 }
 
@@ -941,7 +1242,7 @@ void update_preset(uint8_t idx_prst)
 void debug_preset (uint8_t idx_prst)
 {
     #ifdef DEBUG_PRESET
-      NRF_LOG_INFO("***************************************");        
+      NRF_LOG_INFO("************INTO RUNTIME STRUCTURE**************");        
       NRF_LOG_INFO("PRESET_              %d", idx_prst);
       NRF_LOG_INFO("FC1 =                %d", preset[idx_prst].FC1);
       NRF_LOG_INFO("FC2 =                %d", preset[idx_prst].FC2);
