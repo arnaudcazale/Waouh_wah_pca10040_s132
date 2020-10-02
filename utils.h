@@ -55,6 +55,7 @@ enum
     MANUAL_LEVEL_MODE,  
     AUTO_WAH_MODE,           
     AUTO_LEVEL_MODE,  
+    TALKBOX,
 };
 
 enum
@@ -69,6 +70,28 @@ enum
     COLOR_2,  
     COLOR_3,
     COLOR_4,
+};
+
+enum
+{
+    LOW_PASS,           
+    BAND_PASS,  
+    HIGH_PASS,
+    NOTCH,
+};
+
+enum
+{
+    ae,           
+    ah,  
+    aw,
+    e,
+    ee,
+    er,
+    l,
+    oo,
+    u,
+    uh
 };
 
 #ifdef __GNUC__
@@ -111,6 +134,10 @@ typedef PACKED( struct
      uint16_t                 TIME_AUTO_LEVEL;
      uint8_t                  IMPEDANCE;
      uint8_t                  COLOR;
+//     uint8_t                  HIGH_VOYEL
+//     uint8_t                  LOW_VOYEL
+//     uint8_t                  MIX_DRY_WET
+//     uint8_t                  FILTER_TYPE
      char                     NAME[NAME_MAX_LENGTH];
 }) preset_config_8_t;
 

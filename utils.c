@@ -114,26 +114,29 @@ ret_code_t fds_test_init (void)
 *******************************************************************************/
 static void my_fds_evt_handler(fds_evt_t const * const p_fds_evt)
 {
+
+    //NRF_LOG_INFO("FDS handler - %d - %d\r\n", p_fds_evt->id, p_fds_evt->result);
+
     switch (p_fds_evt->id)
     {
         case FDS_EVT_INIT:
             if (p_fds_evt->result == FDS_SUCCESS)
             {
                 //NRF_LOG_INFO("INIT SUCCESS");
-                flash_initializing = false;
+                //flash_initializing = false;
             }
             break;
         case FDS_EVT_WRITE:
             if (p_fds_evt->result == FDS_SUCCESS)
             {
-                flash_writing = false;
+                //flash_writing = false;
                 //NRF_LOG_INFO("WRITE SUCCESS");
             }
             break;
         case FDS_EVT_UPDATE:
             if (p_fds_evt->result == FDS_SUCCESS)
             {
-                flash_writing = false;
+                //flash_writing = false;
                 //NRF_LOG_INFO("UPDATE SUCCESS");
             }
             break;
@@ -291,7 +294,13 @@ ret_code_t m_fds_write_preset(uint16_t FILE_ID, uint16_t RECORD_KEY, preset_conf
     {   
         //NRF_LOG_INFO("PRESET Variables Record was found thus it is being updated");
         rc = fds_record_update(&desc, &record);
-        APP_ERROR_CHECK(rc);
+        //APP_ERROR_CHECK(rc);
+        if(rc == FDS_ERR_NO_SPACE_IN_FLASH)
+        {
+             ret_code_t rc = fds_gc();// try to do garbage collection
+             APP_ERROR_CHECK(rc);
+        }
+
     }
     else
     {

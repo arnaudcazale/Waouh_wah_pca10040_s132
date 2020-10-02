@@ -55,8 +55,8 @@
  </TraceWindow>
  <Watch1>
   <Watches active="1" update="Never">
-   <Watchpoint numelements="0" expression="preset" evalMode="1" name="preset" radix="16" linenumber="427" filename="../../../utils.c" list=""/>
-   <Watchpoint numelements="4" expression="preset_32" evalMode="2" name="preset_32" radix="16" linenumber="427" filename="../../../utils.c" list=""/>
+   <Watchpoint numelements="0" expression="preset" evalMode="1" name="preset" radix="16" linenumber="421" filename="../../../utils.c" list=""/>
+   <Watchpoint numelements="4" expression="preset_32" evalMode="2" name="preset_32" radix="16" linenumber="421" filename="../../../utils.c" list=""/>
   </Watches>
  </Watch1>
  <Watch2>
@@ -69,21 +69,24 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="1060" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../main.c" selected="1" top="961" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="53" y="840" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../ble_wah.c" selected="0" top="813" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="1060" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../main.c" selected="1" top="1050" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="14" y="845" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../ble_wah.c" selected="0" top="808" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="124" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../ble_wah.h" selected="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="33" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../saadc.c" selected="0" top="9" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="107" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/libraries/util/app_error_weak.c" selected="0" top="90" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="25" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../saadc.h" selected="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="260" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../modules/nrfx/hal/nrf_saadc.h" selected="0" top="243" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="500" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/softdevice/s132/headers/ble_gatts.h" selected="0" top="495" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="443" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../utils.c" selected="0" top="384" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="5" y="405" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../utils.c" selected="0" top="389" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="169" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/libraries/bsp/bsp.h" selected="0" top="133" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="3" y="104" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../utils.h" selected="0" top="83" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="5" y="130" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../utils.h" selected="0" top="111" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="66" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/libraries/bsp/bsp.c" selected="0" top="35" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="178" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/libraries/bsp/bsp_btn_ble.c" selected="0" top="143" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="316" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/ble/ble_advertising/ble_advertising.c" selected="0" top="295" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="231" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/ble/common/ble_conn_params.c" selected="0" top="196" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="1949" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/libraries/fds/fds.c" selected="0" top="1940" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="68" y="94" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../../components/libraries/fds/fds.h" selected="0" top="180" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="6261" useTextEdit="1" useBinaryEdit="0" left="0" path="../config/sdk_config.h" selected="0" top="6258" codecName="Default"/>
  </Files>
  <ARMCrossStudioWindow activeProject="ble_app_template_pca10040_s132" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="C:/Nordic/SDK/nRF5_SDK_15.0.0_a53641a/components/libraries/uart" debugSearchPath="" autoConnectCapabilities="3711"/>
 </session>
