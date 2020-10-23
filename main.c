@@ -134,7 +134,6 @@ NRF_BLE_GATT_DEF(m_gatt);
 NRF_BLE_QWR_DEF(m_qwr);                                                         /**< GATT module instance. */
 BLE_WAH_DEF(m_wah);                                                             /**< Context for the Queued Write module.*/
 BLE_ADVERTISING_DEF(m_advertising);                                             /**< Advertising module instance. */
-
 //APP_TIMER_DEF(m_notification_timer_id);
 
 static uint8_t m_preset_selection_value = 0;
@@ -1047,6 +1046,7 @@ static void advertising_start(bool erase_bonds)
         {
             APP_ERROR_CHECK(ret);
         }
+       
        
         ret_code_t err_code = ble_advertising_start(&m_advertising, BLE_ADV_MODE_FAST);
 
